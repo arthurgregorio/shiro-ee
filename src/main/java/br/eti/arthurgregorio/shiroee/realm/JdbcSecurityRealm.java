@@ -1,6 +1,7 @@
 package br.eti.arthurgregorio.shiroee.realm;
 
 import br.eti.arthurgregorio.shiroee.auth.AuthenticationMechanism;
+import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -11,6 +12,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.AUTHENTICATION_ERROR;
+import org.apache.shiro.authc.credential.DefaultPasswordService;
+import org.apache.shiro.authc.credential.PasswordMatcher;
 
 /**
  *
@@ -29,6 +32,13 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
      */
     public JdbcSecurityRealm(AuthenticationMechanism authenticationMechanism) {
         this.authenticationMechanism = authenticationMechanism;
+        
+        // instantiate the custom password matcher based on bcrypt
+        final PasswordMatcher passwordMatcher = new PasswordMatcher();
+
+        passwordMatcher.setPasswordService(new DefaultPasswordService());
+        
+        super.setCredentialsMatcher(passwordMatcher);
     }
 
     /**
@@ -44,9 +54,12 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
         final UsernamePasswordToken token = 
                 (UsernamePasswordToken) authenticationToken;
         
-        if (this.authenticationMechanism.isAuthorized(token.getUsername())) {
-            return new SimpleAuthenticationInfo(token.getUsername(), 
-                    token.getCredentials(), this.getName());
+        final UserDetails userDetails = this.authenticationMechanism
+                 .getUserDetails(token.getUsername());
+        
+        if (!userDetails.isLdapBindAccount() && !userDetails.isBlocked()) {
+            return new SimpleAuthenticationInfo(userDetails.getUsername(), 
+                    userDetails.getPassword(), this.getName());
         }
 
         throw new AuthenticationException(

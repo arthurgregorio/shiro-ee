@@ -18,7 +18,7 @@ public enum Messages implements MessageFormatter {
     LDAP_CONFIGURATION_INCOMPLETE() {
         @Override
         public String format(Object... values) {
-            return "Ldap url, username or password was not provided, check your configurations";
+            return "Ldap url, bind user/password was not provided, check your configurations";
         }
     },
     NO_REALM_ERROR() {
@@ -66,7 +66,7 @@ public enum Messages implements MessageFormatter {
     BIND_ERROR() {
         @Override
         public String format(Object... values) {
-            return String.format("Can't bind user %s to LDAP directory ", values);
+            return String.format("Can't bind user %s on LDAP directory ", values);
         }
     };
 }

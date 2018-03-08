@@ -1,5 +1,6 @@
 package br.eti.arthurgregorio.shiroee.auth;
 
+import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import java.util.Set;
 
 /**
@@ -16,7 +17,7 @@ public interface AuthenticationMechanism {
      * @param username
      * @return 
      */
-    boolean isAuthorized(String username);
+    UserDetails getUserDetails(String username);
     
     /**
      * 

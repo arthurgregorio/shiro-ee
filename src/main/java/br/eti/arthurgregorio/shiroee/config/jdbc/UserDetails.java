@@ -33,6 +33,12 @@ public interface UserDetails {
      * 
      * @return 
      */
+    boolean isLdapBindAccount();
+    
+    /**
+     * 
+     * @return 
+     */
     default boolean isNotBlocked() {
         return !this.isBlocked();
     }

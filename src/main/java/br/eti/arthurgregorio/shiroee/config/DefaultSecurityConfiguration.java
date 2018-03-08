@@ -10,14 +10,23 @@ import static br.eti.arthurgregorio.shiroee.config.Constants.URL_LOGIN_SUCCESS;
 import static br.eti.arthurgregorio.shiroee.config.Constants.URL_LOGOUT_PATH;
 import static br.eti.arthurgregorio.shiroee.config.Constants.URL_ROOT_SECURED_PATH;
 import static br.eti.arthurgregorio.shiroee.config.Constants.URL_UNAUTHORIZED;
+import br.eti.arthurgregorio.shiroee.config.ldap.DefaultLdapUserProvider;
+import br.eti.arthurgregorio.shiroee.config.ldap.LdapUserProvider;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.INSTANCE_IS_INVALID;
+import static br.eti.arthurgregorio.shiroee.config.messages.Messages.LDAP_CONFIGURATION_INCOMPLETE;
+import static br.eti.arthurgregorio.shiroee.config.messages.Messages.LDAP_REPOSITORY_ERROR;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.NO_REALM_ERROR;
+import br.eti.arthurgregorio.shiroee.realm.LdapSecurityRealm;
 import java.util.Collection;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.naming.NamingException;
+import javax.naming.ldap.LdapContext;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
@@ -32,6 +41,7 @@ import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 
 /**
@@ -46,16 +56,22 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private final PropertiesConfiguration configuration;
 
+    private final LdapUserProvider ldapUserProvider;
+    private final JndiLdapContextFactory ldapContextFactory;
+
     @Inject
     private Instance<RealmConfiguration> realmConfigurationInstance;
     @Inject
     private Instance<HttpSecurityConfiguration> httpSecurityConfigurationInstance;
 
     /**
-     * 
+     *
      */
     public DefaultSecurityConfiguration() {
         this.configuration = ConfigurationFactory.get();
+
+        this.ldapContextFactory = this.configureLdapContextFactory();
+        this.ldapUserProvider = this.configureLdapUserProvider();
     }
 
     /**
@@ -105,13 +121,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         });
 
         manager.createChain(this.configuration.getString(
-                "url.root_secured_path", URL_ROOT_SECURED_PATH)
-                , this.configuration.getString(
-                "operator.authenticated", AUTHENTICATED_OP));
+                "url.root_secured_path", URL_ROOT_SECURED_PATH),
+                this.configuration.getString(
+                        "operator.authenticated", AUTHENTICATED_OP));
         manager.createChain(this.configuration.getString(
-                "url.logout_path", URL_LOGOUT_PATH)
-                , this.configuration.getString(
-                "operator.logout", LOGOUT_OP));
+                "url.logout_path", URL_LOGOUT_PATH),
+                this.configuration.getString(
+                        "operator.logout", LOGOUT_OP));
 
         final PathMatchingFilterChainResolver resolver
                 = new PathMatchingFilterChainResolver();
@@ -131,9 +147,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         // validate the base configuration
         this.validateRealmConfig();
 
-        final DefaultWebSecurityManager securityManager = 
-                new DefaultWebSecurityManager();
-        
+        final DefaultWebSecurityManager securityManager
+                = new DefaultWebSecurityManager();
+
         // enable the remember me function based on cookies 
         final CookieRememberMeManager rememberMeManager
                 = new CookieRememberMeManager();
@@ -144,16 +160,80 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         final Collection<Realm> realms = this.realmConfigurationInstance
                 .get()
                 .configureRealms();
-        
+
         if (realms == null || realms.isEmpty()) {
             throw new ConfigurationException(NO_REALM_ERROR.format());
         }
-        
+
         // create the security manager
         securityManager.setRememberMeManager(rememberMeManager);
-        securityManager.setRealms(realms);
+
+        // if ldap realm is set, set the context factory for this instance
+        realms.stream()
+                .filter(LdapSecurityRealm.class::isInstance)
+                .map(LdapSecurityRealm.class::cast)
+                .forEach(realm -> {
+                    realm.setContextFactory(this.ldapContextFactory);
+                });
         
+        
+
+        securityManager.setRealms(realms);
+
         return securityManager;
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Produces
+    @ApplicationScoped
+    public LdapUserProvider produceLdapUserProvider() {
+        if (this.ldapUserProvider == null) {
+            this.configureLdapUserProvider();
+        }
+        return this.ldapUserProvider;
+    }
+
+    /**
+     *
+     */
+    private LdapUserProvider configureLdapUserProvider() {
+
+        final String baseDn = this.configuration.getString(
+                "ldap.baseDn", Constants.LDAP_BASE_DN);
+        final String searchFilter = this.configuration.getString(
+                "ldap.searchFilter", Constants.LDAP_SEARCH_FILTER);
+
+        return new DefaultLdapUserProvider(baseDn, searchFilter, 
+                this.ldapContextFactory);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private JndiLdapContextFactory configureLdapContextFactory() {
+
+        final JndiLdapContextFactory factory = new JndiLdapContextFactory();
+
+        final String ldapUrl = this.configuration.getString("ldap.url");
+        final String ldapUser = this.configuration.getString("ldap.user");
+        final String ldapPassword = this.configuration.getString("ldap.password");
+
+        // if one of the base configurations was not provided, throw error
+        if (isBlank(ldapUser) || isBlank(ldapPassword) || isBlank(ldapUrl)) {
+            throw new ConfigurationException(LDAP_CONFIGURATION_INCOMPLETE.format());
+        }
+
+        factory.setUrl(ldapUrl);
+        factory.setSystemUsername(ldapUser);
+        factory.setSystemPassword(ldapPassword);
+
+        factory.setPoolingEnabled(true);
+
+        return factory;
     }
 
     /**
