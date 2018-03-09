@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 Arthur Gregorio.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package br.eti.arthurgregorio.shiroee.config.http;
 
 import br.eti.arthurgregorio.shiroee.config.ConfigurationFactory;
@@ -8,7 +23,9 @@ import java.util.Map;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 
 /**
- *
+ * The http path security builder, with this class you can build rules to 
+ * secure the access to your URL's
+ * 
  * @author Arthur Gregorio
  *
  * @version 1.0.0
@@ -17,13 +34,13 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 public abstract class HttpSecurityBuilder {
     
     private final String authcOperator;
-    
     private final Map<String, String> rules;
     
-    private final PropertiesConfiguration configuration;
+    protected final PropertiesConfiguration configuration;
 
     /**
-     * 
+     * The constructor, load the class with the configuration to retrieve the 
+     * http rules operators and the rules map
      */
     public HttpSecurityBuilder() {
         
@@ -36,49 +53,61 @@ public abstract class HttpSecurityBuilder {
     }
     
     /**
+     * The builder operator to use to construct rules, used by the implementations
+     * of this class to format the rules for this builder
      * 
-     * @param path
-     * @param rule
-     * @return 
+     * @return the builder operator to use 
      */
-    public HttpSecurityBuilder addRule(String path, String rule) {
-        this.rules.put(path, this.format(rule));
-        return this;
+    public abstract String getBuilderOperator();  
+    
+    /**
+     * Method used to add rules to this builder
+     * 
+     * @param path the path to be secured
+     * @param rule the rule to be used to secure this path
+     * @return this builder
+     */
+    public HttpSecurityBuilder add(String path, String rule) {
+        return this.add(path, rule, false);
     }
     
     /**
+     * Method used to add rules to this builder when need to be authenticated
+     * to be accessed 
      * 
-     * @param path
-     * @param rule
-     * @param requireAuthc
-     * @return 
+     * @param path the path to be secured
+     * @param rule the rule to be used to secure this path
+     * @param authenticated if the 
+     * @return this builder
      */
-    public HttpSecurityBuilder addRule(String path, String rule, boolean requireAuthc) {
-        this.rules.put(path, this.authcOperator + "," + this.format(rule));
+    public HttpSecurityBuilder add(String path, String rule, boolean authenticated) {
+        
+        if (authenticated) {
+            this.rules.put(path, this.authcOperator + "," + this.format(rule));
+        } else {
+            this.rules.put(path, this.format(rule));
+        }
+        
         return this;
     }
 
     /**
+     * With this method you can retrieve the rules created in the execution of 
+     * this builder
      * 
-     * @param path
-     * @param rule
-     * @return 
-     */
-    private String format(String rule) {
-        return String.format(this.getDefaultPrefix(), rule);
-    }
-    
-    /**
-     * 
-     * @return 
+     * @return the map of rules to be used
      */
     public Map<String, String> build() {
         return Collections.unmodifiableMap(this.rules);
     }
     
     /**
+     * Used to format the rule whith the builder operator for the given rule
      * 
-     * @return 
+     * @param rule the rule to be formated
+     * @return the rule formated
      */
-    public abstract String getDefaultPrefix();  
+    private String format(String rule) {
+        return String.format(this.getBuilderOperator(), rule);
+    }
 }

@@ -19,6 +19,7 @@ import java.util.Optional;
 import org.apache.shiro.realm.ldap.LdapContextFactory;
 
 /**
+ * The interface for creating a LDAP/AD user provider
  *
  * @author Arthur Gregorio
  *
@@ -28,15 +29,19 @@ import org.apache.shiro.realm.ldap.LdapContextFactory;
 public interface LdapUserProvider {
 
     /**
+     * The method to call when you need to bind a user in the LDAP/AD repository
      * 
-     * @param principal
-     * @return 
+     * @param principal the usernem of the principal
+     * @return a {@link Optional} of {@link LdapUser} to provide the details 
+     * about the user that you want to authenticate
      */
     Optional<LdapUser> search(String principal);
     
     /**
+     * The Shiro {@link LdapContextFactory} to use for creating connections to 
+     * the LDAP/AD repository in this provider
      * 
-     * @param ldapContextFactory 
+     * @param ldapContextFactory the factory, must not be null
      */
     void setLdapContextFactory(LdapContextFactory ldapContextFactory);
 }

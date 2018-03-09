@@ -1,8 +1,24 @@
+/*
+ * Copyright 2018 Arthur Gregorio.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package br.eti.arthurgregorio.shiroee.config.ldap;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The details for the user fond on the LDAP/AD 
@@ -15,18 +31,23 @@ import lombok.Getter;
 public final class LdapUser {
 
     @Getter
+    @Setter
     private String name;
     @Getter
+    @Setter
     private String mail;
     @Getter
+    @Setter
     private String sAMAccountName;
     @Getter
+    @Setter
     private String distinguishedName;
     @Getter
+    @Setter
     private int userAccountControl;
 
     /**
-     * 
+     * Constructor, initialize the fields
      */
     public LdapUser() {
         this.name = null;
@@ -37,61 +58,22 @@ public final class LdapUser {
     }
     
     /**
+     * Converte a set of {@link Attributes} to a single instance of this class
      * 
-     * @param attributes
-     * @return
-     * @throws NamingException 
+     * @param attributes the LDAP/AD attributes to work
+     * @return the {@link LdapUser} builded from this attributes
+     * @throws NamingException if any error ocurr in this mapping process
      */
     public static LdapUser of(Attributes attributes) throws NamingException {
 
-        final LdapUser bindable = new LdapUser();
+        final LdapUser ldapUser = new LdapUser();
 
-        bindable.setName(attributes.get("name").get());
-        bindable.setMail(attributes.get("mail").get());
-        bindable.setsAMAccountName(attributes.get("sAMAccountName").get());
-        bindable.setDistinguishedName(attributes.get("distinguishedName").get());
-        bindable.setUserAccountControl(attributes.get("userAccountControl").get());
+        ldapUser.setName(String.valueOf(attributes.get("name").get()));
+        ldapUser.setMail(String.valueOf(attributes.get("mail").get()));
+        ldapUser.setSAMAccountName(String.valueOf(attributes.get("sAMAccountName").get()));
+        ldapUser.setDistinguishedName(String.valueOf(attributes.get("distinguishedName").get()));
+        ldapUser.setUserAccountControl((int)(attributes.get("userAccountControl").get()));
         
-        return bindable;
-    }
-
-    /**
-     * 
-     * @param name 
-     */
-    public void setName(Object name) {
-        this.name = String.valueOf(name);
-    }
-
-    /**
-     * 
-     * @param mail 
-     */
-    public void setMail(Object mail) {
-        this.mail = String.valueOf(mail);
-    }
-
-    /**
-     * 
-     * @param sAMAccountName 
-     */
-    public void setsAMAccountName(Object sAMAccountName) {
-        this.sAMAccountName = String.valueOf(sAMAccountName);
-    }
-
-    /**
-     * 
-     * @param distinguishedName 
-     */
-    public void setDistinguishedName(Object distinguishedName) {
-        this.distinguishedName = String.valueOf(distinguishedName);
-    }
-
-    /**
-     * 
-     * @param userAccountControl 
-     */
-    public void setUserAccountControl(Object userAccountControl) {
-        this.userAccountControl = Integer.valueOf(String.valueOf(userAccountControl));
+        return ldapUser;
     }
 }

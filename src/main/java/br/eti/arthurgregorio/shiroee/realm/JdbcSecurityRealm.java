@@ -1,8 +1,25 @@
+/*
+ * Copyright 2018 Arthur Gregorio.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package br.eti.arthurgregorio.shiroee.realm;
 
 import br.eti.arthurgregorio.shiroee.auth.AuthenticationMechanism;
+import br.eti.arthurgregorio.shiroee.auth.DatabaseAuthenticationMechanism;
 import br.eti.arthurgregorio.shiroee.auth.PasswordEncoder;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
+import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetailsProvider;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -16,6 +33,9 @@ import static br.eti.arthurgregorio.shiroee.config.messages.Messages.AUTHENTICAT
 import org.apache.shiro.authc.credential.PasswordMatcher;
 
 /**
+ * A local realm used to authenticate users with through a database connection
+ * providede by using a {@link DatabaseAuthenticationMechanism} in cojunction
+ * with your implementation of the {@link UserDetailsProvider}
  *
  * @author Arthur Gregorio
  *
@@ -24,14 +44,18 @@ import org.apache.shiro.authc.credential.PasswordMatcher;
  */
 public class JdbcSecurityRealm extends AuthorizingRealm {
 
-    private final AuthenticationMechanism authenticationMechanism;
+    private final AuthenticationMechanism<? extends UserDetails> mechanism;
 
     /**
+     * The constructor
      * 
-     * @param authenticationMechanism 
+     * @param mechanism the authentication mechanism that you 
+     * wish to use. If you don't want to implement your own mechanism, just 
+     * use the {@link DatabaseAuthenticationMechanism} already shipped with this 
+     * implementation of shiro
      */
-    public JdbcSecurityRealm(AuthenticationMechanism authenticationMechanism) {
-        this.authenticationMechanism = authenticationMechanism;
+    public JdbcSecurityRealm(AuthenticationMechanism<? extends UserDetails> mechanism) {
+        this.mechanism = mechanism;
         
         // instantiate the custom password matcher based on bcrypt
         final PasswordMatcher passwordMatcher = new PasswordMatcher();
@@ -42,6 +66,7 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
     }
 
     /**
+     * {@inheritDoc}
      * 
      * @param authenticationToken
      * @return
@@ -54,8 +79,8 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
         final UsernamePasswordToken token = 
                 (UsernamePasswordToken) authenticationToken;
         
-        final UserDetails userDetails = this.authenticationMechanism
-                 .getUserDetails(token.getUsername());
+        final UserDetails userDetails = this.mechanism
+                 .getAccount(token.getUsername());
         
         if (!userDetails.isLdapBindAccount() && !userDetails.isBlocked()) {
             return new SimpleAuthenticationInfo(userDetails.getUsername(), 
@@ -67,6 +92,7 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
     }
 
     /**
+     * {@inheritDoc}
      * 
      * @param principalCollection
      * @return 
@@ -80,7 +106,7 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
         final SimpleAuthorizationInfo authzInfo = new SimpleAuthorizationInfo();
         
         authzInfo.setStringPermissions(
-                this.authenticationMechanism.getPermissionsFor(username));
+                this.mechanism.getPermissions(username));
         
         return authzInfo;
     }

@@ -31,8 +31,8 @@ public class HttpSecurityBuilderTest {
         
         final HttpSecurityBuilder builder = new PermissionHttpSecurityBuilder();
 
-        builder.addRule("/secured/tools/user/**", "user:access", true)
-                .addRule("/secured/tools/group/**", "group:access", true);
+        builder.add("/secured/tools/user/**", "user:access", true)
+                .add("/secured/tools/group/**", "group:access", true);
         
         this.rules = builder.build();
     }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 Arthur Gregorio.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package br.eti.arthurgregorio.shiroee.config;
 
 import static br.eti.arthurgregorio.shiroee.config.Constants.ANONYMOUS_OP;
@@ -14,7 +29,6 @@ import br.eti.arthurgregorio.shiroee.config.ldap.DefaultLdapUserProvider;
 import br.eti.arthurgregorio.shiroee.config.ldap.LdapUserProvider;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.INSTANCE_IS_INVALID;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.LDAP_CONFIGURATION_INCOMPLETE;
-import static br.eti.arthurgregorio.shiroee.config.messages.Messages.LDAP_REPOSITORY_ERROR;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.NO_REALM_ERROR;
 import br.eti.arthurgregorio.shiroee.realm.LdapSecurityRealm;
 import java.util.Collection;
@@ -23,8 +37,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.naming.NamingException;
-import javax.naming.ldap.LdapContext;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.apache.shiro.codec.Hex;
@@ -42,9 +54,15 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.ldap.JndiLdapContextFactory;
+import org.apache.shiro.realm.ldap.LdapContextFactory;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
+import org.apache.shiro.web.mgt.WebSecurityManager;
 
 /**
+ * The main class of this library.
+ * 
+ * Its in this class that all configurations are consolidated and Shiro is 
+ * configured to work with you http rules and the realms of your choice.
  *
  * @author Arthur Gregorio
  *
@@ -57,7 +75,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private final PropertiesConfiguration configuration;
 
     private final LdapUserProvider ldapUserProvider;
-    private final JndiLdapContextFactory ldapContextFactory;
+    private final LdapContextFactory ldapContextFactory;
 
     @Inject
     private Instance<RealmConfiguration> realmConfigurationInstance;
@@ -65,7 +83,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private Instance<HttpSecurityConfiguration> httpSecurityConfigurationInstance;
 
     /**
-     *
+     * The constructor, retrieve the configuration and build the basic 
+     * configuration for the {@link WebSecurityManager} and the 
+     * {@link FilterChainResolver}
      */
     public DefaultSecurityConfiguration() {
         this.configuration = ConfigurationFactory.get();
@@ -75,8 +95,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
+     * {@inheritDoc }
      *
-     * @return
+     * @return 
      */
     @Override
     public FilterChainResolver configurteFilterChainResolver() {
@@ -138,6 +159,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
+     * {@inheritDoc }
      *
      * @return
      */
@@ -184,8 +206,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
+     * Produce the {@link LdapUserProvider} for external classes outside of the
+     * library.
+     * 
+     * This is needed in case of you need to find the data from a LDAP/AD account
+     * to create a simple bind account on the database
      *
-     * @return
+     * @return the provider configured
      */
     @Produces
     @ApplicationScoped
@@ -197,7 +224,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     *
+     * Configure the {@link LdapUserProvider}
+     * 
+     * @return the {@link LdapUserProvider} configured
      */
     private LdapUserProvider configureLdapUserProvider() {
 
@@ -211,10 +240,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
+     * Configure the {@link LdapContextFactory} for the classes that want to 
+     * connect to the LDAP/AD repository
      *
-     * @return
+     * @return the {@link JndiLdapContextFactory} configured
      */
-    private JndiLdapContextFactory configureLdapContextFactory() {
+    private LdapContextFactory configureLdapContextFactory() {
 
         final JndiLdapContextFactory factory = new JndiLdapContextFactory();
 
@@ -237,7 +268,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     * @return the default form authentication mechanism for this realm
+     * Configure the {@link FormAuthenticationFilter} for form based 
+     * authentication
+     *
+     * @return the {@link FormAuthenticationFilter} configured
      */
     private FormAuthenticationFilter configureFormAuthentication() {
 
@@ -253,7 +287,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     * @return a custom cypher key for the cookie
+     * Build a single key for cookies storage when remeber me is enable
+     * 
+     * @return cypher key for the cookie storage
      */
     private byte[] createCypherKey() {
         return String.format("0x%s", Hex.encodeToString(new AesCipherService()
@@ -261,7 +297,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     *
+     * Validate the http configuration
      */
     private void validateHttpConfig() {
         if (this.httpSecurityConfigurationInstance.isUnsatisfied()
@@ -272,7 +308,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     *
+     * Validate the real configuration
      */
     private void validateRealmConfig() {
         if (this.realmConfigurationInstance.isUnsatisfied()

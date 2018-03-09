@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 Arthur Gregorio.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package br.eti.arthurgregorio.shiroee.realm;
 
 import br.eti.arthurgregorio.shiroee.auth.AuthenticationMechanism;
@@ -17,6 +32,7 @@ import static br.eti.arthurgregorio.shiroee.config.messages.Messages.AUTHENTICAT
 import java.util.Set;
 
 /**
+ * The base implementation for authenticate users throug a LDAP/AD repository
  *
  * @author Arthur Gregorio
  *
@@ -26,26 +42,33 @@ import java.util.Set;
 public class LdapSecurityRealm extends DefaultLdapRealm {
 
     private final LdapUserProvider ldapUserProvider;
-    private final AuthenticationMechanism authenticationMechanism;
+    private final AuthenticationMechanism<? extends UserDetails> mechanism;
 
     /**
+     * The constructor
      * 
-     * @param ldapUserProvider
-     * @param authenticationMechanism 
+     * @param ldapUserProvider the provider used to bind users on the LDAP/AD
+     * @param mechanism the authentication mechanism used to 
+     * verify the accounts before sending them to authenticate throug LDAP/AD.
+     * With this mechanism you can implement the two factor implementation where 
+     * you have a bind account in your local database and use them to create 
+     * in your application the permissions for the user. If this parameter is
+     * <code>null</code> a {@link EmptyAuthenticationMechanism} is used.
      */
-    public LdapSecurityRealm(LdapUserProvider ldapUserProvider, AuthenticationMechanism authenticationMechanism) {
+    public LdapSecurityRealm(LdapUserProvider ldapUserProvider, AuthenticationMechanism mechanism) {
         
         this.ldapUserProvider = ldapUserProvider;
         
         // if not authentication mechanism is provided, use a null one
-        if (authenticationMechanism == null) {
-            this.authenticationMechanism = new EmptyAuthenticationMechanism();
+        if (mechanism == null) {
+            this.mechanism = new EmptyAuthenticationMechanism();
         } else {
-            this.authenticationMechanism = authenticationMechanism;
+            this.mechanism = mechanism;
         }
     }
 
     /**
+     * {@inheritDoc}
      *
      * @param token
      * @param factory
@@ -59,7 +82,7 @@ public class LdapSecurityRealm extends DefaultLdapRealm {
         final String username = String.valueOf(token.getPrincipal());
 
         final UserDetails userDetails = 
-                this.authenticationMechanism.getUserDetails(username);
+                this.mechanism.getAccount(username);
         
         if (userDetails.isLdapBindAccount() && !userDetails.isBlocked()) {
             return super.queryForAuthenticationInfo(token, factory);
@@ -69,6 +92,7 @@ public class LdapSecurityRealm extends DefaultLdapRealm {
     }
 
     /**
+     * {@inheritDoc}
      *
      * @param principalCollection
      * @param factory
@@ -81,8 +105,8 @@ public class LdapSecurityRealm extends DefaultLdapRealm {
 
         final String username = (String) this.getAvailablePrincipal(principalCollection);
 
-        final Set<String> permissions = this.authenticationMechanism
-                .getPermissionsFor(username);
+        final Set<String> permissions = this.mechanism
+                .getPermissions(username);
 
         final SimpleAuthorizationInfo authorizationInfo
                 = new SimpleAuthorizationInfo();
@@ -93,6 +117,7 @@ public class LdapSecurityRealm extends DefaultLdapRealm {
     }
 
     /**
+     * {@inheritDoc}
      *
      * @param principal
      * @return
