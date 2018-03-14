@@ -11,8 +11,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-    
+    </properties> 
+   
     <name>shiro-ee</name>
     <description>JEE extension for Apache Shiro Security Framework</description>
     <url>http://arthurgregorio.eti.br/shiro-ee</url>
@@ -32,6 +32,13 @@
     
     <inceptionYear>2018</inceptionYear>
     
+    <scm>
+        <connection>scm:git:git@github.com:arthurgregorio/shiro-ee.git</connection>
+        <url>scm:git:git@github.com:arthurgregorio/shiro-ee.git</url>
+        <developerConnection>scm:git:git@github.com:arthurgregorio/shiro-ee.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -39,6 +46,17 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     
     <dependencies>
         <!--jee7 api-->
@@ -124,13 +142,46 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-    
-    <scm>
-        <connection>scm:git:git@github.com:arthurgregorio/shiro-ee.git</connection>
-        <url>scm:git:git@github.com:arthurgregorio/shiro-ee.git</url>
-        <developerConnection>scm:git:git@github.com:arthurgregorio/shiro-ee.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
 </project>
