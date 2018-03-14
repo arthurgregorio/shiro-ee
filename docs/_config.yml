@@ -1,24 +1,28 @@
+remote_theme: poole/hyde
+
 # Dependencies
-markdown:         redcarpet
-pygments:         true
+markdown: redcarpet
+highlighter: pygments
 
 # Permalinks
-permalink:        pretty
+permalink: pretty
+relative_permalinks: true
 
 # Setup
-title:            Hyde
-tagline:          'A Jekyll theme'
-description:      'A brazen two-column <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that pairs a prominent sidebar with uncomplicated content. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
-url:              http://hyde.getpoole.com
+title: ShiroEE
+tagline: 'ShiroEE Project'
+description: ''
+url: http://arthurgregorio.eti.br/shiro-ee
+baseurl: /
 
 author:
-  name:           'Mark Otto'
-  url:            https://twitter.com/mdo
+  name: 'Arthur Gregorio'
+  url: https://twitter.com/gregorioarthur
 
-paginate:         5
+paginate: 5
 
 # Custom vars
-version:          2.0.0
+version: 1.0.0
 
 github:
-  repo:           https://github.com/poole/hyde
+  repo: https://github.com/arthurgregorio/shiro-ee
