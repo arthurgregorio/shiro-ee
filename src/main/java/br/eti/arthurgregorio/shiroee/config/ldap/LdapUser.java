@@ -44,7 +44,7 @@ public final class LdapUser {
     private String distinguishedName;
     @Getter
     @Setter
-    private int userAccountControl;
+    private String userAccountControl;
 
     /**
      * Constructor, initialize the fields
@@ -54,7 +54,7 @@ public final class LdapUser {
         this.mail = null;
         this.sAMAccountName = null;
         this.distinguishedName = null;
-        this.userAccountControl = 0;
+        this.userAccountControl = null;
     }
     
     /**
@@ -72,7 +72,7 @@ public final class LdapUser {
         ldapUser.setMail(String.valueOf(attributes.get("mail").get()));
         ldapUser.setSAMAccountName(String.valueOf(attributes.get("sAMAccountName").get()));
         ldapUser.setDistinguishedName(String.valueOf(attributes.get("distinguishedName").get()));
-        ldapUser.setUserAccountControl((int)(attributes.get("userAccountControl").get()));
+        ldapUser.setUserAccountControl(String.valueOf(attributes.get("userAccountControl").get()));
         
         return ldapUser;
     }
