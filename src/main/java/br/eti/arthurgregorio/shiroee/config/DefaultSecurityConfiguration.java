@@ -28,9 +28,9 @@ import static br.eti.arthurgregorio.shiroee.config.Constants.URL_UNAUTHORIZED;
 import br.eti.arthurgregorio.shiroee.config.ldap.DefaultLdapUserProvider;
 import br.eti.arthurgregorio.shiroee.config.ldap.LdapUserProvider;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.INSTANCE_IS_INVALID;
-import static br.eti.arthurgregorio.shiroee.config.messages.Messages.LDAP_CONFIGURATION_INCOMPLETE;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.NO_REALM_ERROR;
 import br.eti.arthurgregorio.shiroee.realm.LdapSecurityRealm;
+import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collection;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
@@ -38,7 +38,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
@@ -253,11 +252,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         final String ldapUser = this.configuration.getString("ldap.user");
         final String ldapPassword = this.configuration.getString("ldap.password");
 
-        // if one of the base configurations was not provided, throw error
-        if (isBlank(ldapUser) || isBlank(ldapPassword) || isBlank(ldapUrl)) {
-            throw new ConfigurationException(LDAP_CONFIGURATION_INCOMPLETE.format());
-        }
-
         factory.setUrl(ldapUrl);
         factory.setSystemUsername(ldapUser);
         factory.setSystemPassword(ldapPassword);
@@ -299,22 +293,43 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * Validate the http configuration
      */
-    private void validateHttpConfig() {
-        if (this.httpSecurityConfigurationInstance.isUnsatisfied()
-                || this.httpSecurityConfigurationInstance.isAmbiguous()) {
-            throw new ConfigurationException(INSTANCE_IS_INVALID.format(
-                    "HttpSecurityConfigurationInstance"));
+    private HttpSecurityConfiguration validateHttpConfig() {
+        if (!this.httpSecurityConfigurationInstance.isUnsatisfied()
+                && !this.httpSecurityConfigurationInstance.isAmbiguous()) {
+            return this.httpSecurityConfigurationInstance.get();
         }
+        throw new ConfigurationException(
+                INSTANCE_IS_INVALID.format("HttpSecurityConfigurationInstance"));
     }
 
     /**
      * Validate the real configuration
      */
-    private void validateRealmConfig() {
-        if (this.realmConfigurationInstance.isUnsatisfied()
-                || this.realmConfigurationInstance.isAmbiguous()) {
-            throw new ConfigurationException(INSTANCE_IS_INVALID.format(
-                    "RealmConfiguration"));
+    private RealmConfiguration validateRealmConfig() {
+        if (!this.realmConfigurationInstance.isUnsatisfied()
+                && !this.realmConfigurationInstance.isAmbiguous()) {
+            return this.realmConfigurationInstance.get();
         }
+        throw new ConfigurationException(
+                INSTANCE_IS_INVALID.format("RealmConfiguration"));
+    }
+    
+    /**
+     * Destroy the instance of {@link RealmConfiguration} to avoid memory leaks
+     * 
+     * @param instance the instance to destroy the injected instance
+     */
+    private void destroy(RealmConfiguration instance) {
+        this.realmConfigurationInstance.destroy(instance);
+    }
+    
+    /**
+     * Destroy the instance of {@link HttpSecurityConfiguration} to avoid memory
+     * leaks
+     * 
+     * @param instance the instance to destroy the injected instance
+     */
+    private void destroy(HttpSecurityConfiguration instance) {
+        this.httpSecurityConfigurationInstance.destroy(instance);
     }
 }
