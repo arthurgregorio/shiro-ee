@@ -248,9 +248,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
         final JndiLdapContextFactory factory = new JndiLdapContextFactory();
 
-        final String ldapUrl = this.configuration.getString("ldap.url");
-        final String ldapUser = this.configuration.getString("ldap.user");
-        final String ldapPassword = this.configuration.getString("ldap.password");
+        final String ldapUrl = checkNotNull(
+                this.configuration.getString("ldap.url"));
+        final String ldapUser = checkNotNull(
+                this.configuration.getString("ldap.user"));
+        final String ldapPassword = checkNotNull(
+                this.configuration.getString("ldap.password"));
 
         factory.setUrl(ldapUrl);
         factory.setSystemUsername(ldapUser);
