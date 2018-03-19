@@ -101,9 +101,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     @Override
     public FilterChainResolver configurteFilterChainResolver() {
 
-        // validate the base configuration
-        this.validateHttpConfig();
-
         final FilterChainManager manager = new DefaultFilterChainManager();
 
         manager.addFilter(this.configuration.getString(
@@ -130,15 +127,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                 "operator.required_permission", REQUIRED_PERMISSION_OP),
                 permsFilter);
 
+        // validate the base configuration
+        final HttpSecurityConfiguration httpSecurityConfiguration
+                = this.validateHttpConfig();
+        
         // build the http security rules for each path
-        final Map<String, String> chains = this.httpSecurityConfigurationInstance
-                .get()
+        final Map<String, String> chains = httpSecurityConfiguration
                 .configureHttpSecurity()
                 .build();
 
         chains.keySet().stream().forEach(path -> {
             manager.createChain(path, chains.get(path));
         });
+        
+        this.destroy(httpSecurityConfiguration);
 
         manager.createChain(this.configuration.getString(
                 "url.root_secured_path", URL_ROOT_SECURED_PATH),
@@ -177,14 +179,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
         rememberMeManager.setCipherKey(this.createCypherKey());
 
+        final RealmConfiguration realmConfiguration = this.validateRealmConfig();
+        
         // get the list of realms to use with this configuration
-        final Collection<Realm> realms = this.realmConfigurationInstance
-                .get()
-                .configureRealms();
+        final Collection<Realm> realms = realmConfiguration.configureRealms();
 
         if (realms == null || realms.isEmpty()) {
             throw new ConfigurationException(NO_REALM_ERROR.format());
         }
+        
+        this.destroy(realmConfiguration);
 
         // create the security manager
         securityManager.setRememberMeManager(rememberMeManager);
