@@ -71,10 +71,10 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 @ApplicationScoped
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
-    private final PropertiesConfiguration configuration;
+    private PropertiesConfiguration configuration;
 
-    private final LdapUserProvider ldapUserProvider;
-    private final LdapContextFactory ldapContextFactory;
+    private LdapUserProvider ldapUserProvider;
+    private LdapContextFactory ldapContextFactory;
 
     @Inject
     private Instance<RealmConfiguration> realmConfigurationInstance;
@@ -88,9 +88,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public DefaultSecurityConfiguration() {
         this.configuration = ConfigurationFactory.get();
-
-        this.ldapContextFactory = this.configureLdapContextFactory();
-        this.ldapUserProvider = this.configureLdapUserProvider();
+        
+        // check if the LDAP/AD is enabled
+        final boolean ldapEnabled = this.configuration
+                .getBoolean("ldap.enabled", false);
+        
+        if (ldapEnabled) {
+            this.ldapContextFactory = this.configureLdapContextFactory();
+            this.ldapUserProvider = this.configureLdapUserProvider();
+        }
     }
 
     /**
@@ -200,8 +206,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                 .forEach(realm -> {
                     realm.setContextFactory(this.ldapContextFactory);
                 });
-        
-        
 
         securityManager.setRealms(realms);
 
