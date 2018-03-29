@@ -30,6 +30,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.AUTHENTICATION_ERROR;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.credential.PasswordMatcher;
 
 /**
@@ -87,8 +88,8 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
                     userDetails.getPassword(), this.getName());
         }
 
-        throw new AuthenticationException(
-                AUTHENTICATION_ERROR.format(token.getUsername()));
+        throw new IncorrectCredentialsException(AUTHENTICATION_ERROR
+                .format(token.getUsername()));
     }
 
     /**

@@ -24,7 +24,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.realm.ldap.LdapContextFactory;
 
 /**
@@ -95,7 +95,7 @@ public class DefaultLdapUserProvider implements LdapUserProvider {
                 return Optional.of(LdapUser.of(attributes));
             }
         } catch (NamingException ex) {
-            throw new AuthenticationException(BIND_ERROR.format(principal));
+            throw new IncorrectCredentialsException(BIND_ERROR.format(principal));
         }
         
         return Optional.empty();

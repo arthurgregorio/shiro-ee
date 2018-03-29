@@ -20,7 +20,6 @@ import br.eti.arthurgregorio.shiroee.auth.EmptyAuthenticationMechanism;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import br.eti.arthurgregorio.shiroee.config.ldap.LdapUserProvider;
 import javax.naming.NamingException;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -30,6 +29,8 @@ import org.apache.shiro.realm.ldap.LdapContextFactory;
 import org.apache.shiro.subject.PrincipalCollection;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.AUTHENTICATION_ERROR;
 import java.util.Set;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 
 /**
  * The base implementation for authenticate users throug a LDAP/AD repository
@@ -88,7 +89,8 @@ public class LdapSecurityRealm extends DefaultLdapRealm {
             return super.queryForAuthenticationInfo(token, factory);
         }
 
-        throw new AuthenticationException(AUTHENTICATION_ERROR.format(username));
+        throw new IncorrectCredentialsException(AUTHENTICATION_ERROR
+                .format(username));
     }
 
     /**
@@ -125,8 +127,7 @@ public class LdapSecurityRealm extends DefaultLdapRealm {
     @Override
     protected String getUserDn(String principal) {
         return this.ldapUserProvider.search(principal)
-                .orElseThrow(() -> new AuthenticationException(
-                        AUTHENTICATION_ERROR.format(principal)))
+                .orElseThrow(() -> new UnknownAccountException(AUTHENTICATION_ERROR.format(principal)))
                 .getDistinguishedName();
     }
 }
