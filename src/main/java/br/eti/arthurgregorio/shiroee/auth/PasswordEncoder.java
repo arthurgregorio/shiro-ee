@@ -76,4 +76,28 @@ public class PasswordEncoder implements PasswordService {
     public boolean passwordsMatch(Object submittedPlaintext, String encrypted) {
         return BCrypt.checkpw(String.valueOf((char[]) submittedPlaintext), encrypted);
     }
+
+    /**
+     * Same as {@link #passwordsMatch(java.lang.Object, java.lang.String)} but
+     * with string parameter for the submitted password
+     * 
+     * @param submittedPlaintext
+     * @param encrypted
+     * @return 
+     */
+    public boolean passwordsMatch(String submittedPlaintext, String encrypted) {
+        return BCrypt.checkpw(String.valueOf(submittedPlaintext), encrypted);
+    }
+    
+    /**
+     * Same as {@link #passwordsMatch(java.lang.Object, java.lang.String)} but
+     * with char-array parameter for the submitted password
+     * 
+     * @param submittedPlaintext
+     * @param encrypted
+     * @return 
+     */
+    public boolean passwordsMatch(char[] submittedPlaintext, String encrypted) {
+        return BCrypt.checkpw(String.valueOf(submittedPlaintext), encrypted);
+    }
 }
