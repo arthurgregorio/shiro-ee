@@ -38,6 +38,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
@@ -126,8 +127,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         final PermissionsAuthorizationFilter permsFilter
                 = new PermissionsAuthorizationFilter();
 
-        permsFilter.setUnauthorizedUrl(this.configuration
-                .getString("url.unauthorized", URL_UNAUTHORIZED));
+        // configure the default url for http 401 redirect
+        final String Url401 = this.configuration.getString("url.unauthorized");
+        
+        if (StringUtils.isNotBlank(Url401)) {
+            permsFilter.setUnauthorizedUrl(Url401);
+        }
 
         manager.addFilter(this.configuration.getString(
                 "operator.required_permission", REQUIRED_PERMISSION_OP),
