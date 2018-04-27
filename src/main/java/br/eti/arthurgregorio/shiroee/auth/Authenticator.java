@@ -20,11 +20,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-        
+
 /**
  * The basic authenticator, with this class you can authenticate the users and
  * logout them.
- * 
+ *
  * All the verifications are made throug the current {@link Subject}
  *
  * @author Arthur Gregorio
@@ -35,7 +35,7 @@ import org.apache.shiro.subject.Subject;
 @Named
 @RequestScoped
 public class Authenticator implements Serializable {
-    
+
     private final Subject subject;
 
     /**
@@ -44,10 +44,10 @@ public class Authenticator implements Serializable {
     public Authenticator() {
         this.subject = SecurityUtils.getSubject();
     }
-    
+
     /**
      * Login the user by his credentials
-     * 
+     *
      * @param credential the user credentials
      */
     public void login(Credential credential) {
@@ -60,7 +60,7 @@ public class Authenticator implements Serializable {
     public void logout() {
         this.subject.logout();
     }
-    
+
     /**
      * @return if authentication is needed for the current subject
      */

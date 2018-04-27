@@ -15,6 +15,7 @@
  */
 package br.eti.arthurgregorio.shiroee.config;
 
+import br.eti.arthurgregorio.shiroee.auth.events.AuthenticationEventSupport;
 import static br.eti.arthurgregorio.shiroee.config.Constants.ANONYMOUS_OP;
 import static br.eti.arthurgregorio.shiroee.config.Constants.AUTHENTICATED_OP;
 import static br.eti.arthurgregorio.shiroee.config.Constants.LOGOUT_OP;
@@ -24,13 +25,13 @@ import static br.eti.arthurgregorio.shiroee.config.Constants.URL_LOGIN;
 import static br.eti.arthurgregorio.shiroee.config.Constants.URL_LOGIN_SUCCESS;
 import static br.eti.arthurgregorio.shiroee.config.Constants.URL_LOGOUT_PATH;
 import static br.eti.arthurgregorio.shiroee.config.Constants.URL_ROOT_SECURED_PATH;
-import static br.eti.arthurgregorio.shiroee.config.Constants.URL_UNAUTHORIZED;
 import br.eti.arthurgregorio.shiroee.config.ldap.DefaultLdapUserProvider;
 import br.eti.arthurgregorio.shiroee.config.ldap.LdapUserProvider;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.INSTANCE_IS_INVALID;
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.NO_REALM_ERROR;
 import br.eti.arthurgregorio.shiroee.realm.LdapSecurityRealm;
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
@@ -39,6 +40,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
@@ -76,6 +78,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private LdapUserProvider ldapUserProvider;
     private LdapContextFactory ldapContextFactory;
+    
+    @Inject
+    private AuthenticationEventSupport authenticationEventSupport;
 
     @Inject
     private Instance<RealmConfiguration> realmConfigurationInstance;
@@ -204,6 +209,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         // create the security manager
         securityManager.setRememberMeManager(rememberMeManager);
 
+        // add the modular authenticator with support for CDI events 
+        final ModularRealmAuthenticator authenticator = 
+                new ModularRealmAuthenticator();
+        
+        authenticator.setAuthenticationListeners(
+                Lists.newArrayList(this.authenticationEventSupport));
+        
+        securityManager.setAuthenticator(authenticator);
+        
         // if ldap realm is set, set the context factory for this instance
         realms.stream()
                 .filter(LdapSecurityRealm.class::isInstance)
@@ -211,7 +225,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                 .forEach(realm -> {
                     realm.setContextFactory(this.ldapContextFactory);
                 });
-
+        
         securityManager.setRealms(realms);
 
         return securityManager;
