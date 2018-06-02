@@ -43,6 +43,10 @@ To configure the authentication process you need to create a class to tell Shiro
 
 To configure the URL authorization of you project you just need to implement the ```HttpSecurityConfiguration``` class and with the builder class (```HttpSecurityBuilder```) provided by the project configure wich path's you need to protect. A sample of this process [can be found here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/infrastructure/shiro/PathSecurityConfiguration.java).
 
+### Bonus:
+
+The authentication control and the session control are the parts managed by the Shiro Framework but you need to implement some classes to access this features without compromissing the coupling of your project. To help with that, the [Library](https://github.com/arthurgregorio/library) project also have samples of this mechanics to, they can be found [here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/application/controllers/AuthenticationBean.java) and [here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/application/controllers/UserSessionBean.java).
+
 ## Project with ShiroEE:
 
 If you want a full project where ShiroEE is configured with authentication through LDAP and Database, you can check the Library project made by me to provide a full base architecture for JEE applications.
