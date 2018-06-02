@@ -49,4 +49,4 @@ The authentication control and the session control are the parts managed by the 
 
 ## Project with ShiroEE:
 
-If you want a full project where ShiroEE is configured with authentication through LDAP and Database, you can check the Library project made by me to provide a full base architecture for JEE applications.
+If you want a full project where ShiroEE is configured with authentication through LDAP and Database, you can check the [Library](https://github.com/arthurgregorio/library) project made by me to provide a full base architecture for JEE applications.
