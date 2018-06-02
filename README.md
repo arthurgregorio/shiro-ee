@@ -2,7 +2,7 @@
 
 ShiroEE is a simple java extension to make Apache Shiro more CDI aware and simplify the configuration processes without the use of _.ini_ files.
 
-This library also provide a ready to use implementation of authentication realm for simultaneously use of database and LDAP/AD mechanichs.
+This library also provide a ready to use implementation of authentication realm for simultaneously use of database and LDAP/AD mechanics .
 
 ## In your project:
 
