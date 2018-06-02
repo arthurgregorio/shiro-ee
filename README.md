@@ -45,7 +45,7 @@ To configure the URL authorization of you project you just need to implement the
 
 ### Bonus:
 
-The authentication control and the session control are the parts managed by the Shiro Framework but you need to implement some classes to access this features without compromissing the coupling of your project. To help with that, the [Library](https://github.com/arthurgregorio/library) project also have samples of this mechanics to, they can be found [here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/application/controllers/AuthenticationBean.java) and [here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/application/controllers/UserSessionBean.java).
+The authentication control and the session control are the parts managed by the Shiro Framework but you need to implement some classes to access this features without compromissing the coupling of your project. To help with that, the [Library](https://github.com/arthurgregorio/library) project also have samples of this mechanics too, they can be found [here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/application/controllers/AuthenticationBean.java) and [here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/application/controllers/UserSessionBean.java).
 
 ## Project with ShiroEE:
 
