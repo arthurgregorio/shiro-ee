@@ -18,7 +18,21 @@ Download one of the releases under the [release page](https://github.com/arthurg
 
 ## Quick use guide:
 
-ShiroEE has a ready to use configuration, basically you need to tell wich type of authentication to use and wich path you want to protect with permissions or roles based authorization. Below you can see the basics to use the extension.
+ShiroEE has a ready to use configuration, basically you need to tell wich type of authentication to use and wich path you want to protect with permissions or roles based authorization.
+
+This two process are described above.
+
+### Configure authentication:
+
+To configure the authentication process you need to create a class to tell ShiroEE wich realm they need to activate in your application. To do that, [see this sample class](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/infrastructure/shiro/SecurityRealmConfiguration.java).
+
+### Configure URL authorizations:
+
+To configure the URL authorization of you project you just need to implement the ```HttpSecurityConfiguration``` class and with the builder class (```HttpSecurityBuilder```) provided by the project configure wich path's you need to protect. A sample of this process [can be found here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/infrastructure/shiro/PathSecurityConfiguration.java).
+
+### Project with ShiroEE:
+
+If you want a full project where ShiroEE is configured with authentication through LDAP and Database, you can check the Library project made by me to provide a full base architecture for JEE applications.
 
 ### ShiroEE properties:
 
