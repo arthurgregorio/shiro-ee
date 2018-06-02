@@ -18,9 +18,9 @@ Download one of the releases under the [release page](https://github.com/arthurg
 
 ## Quick use guide:
 
-ShiroEE has a ready to use configuration, basically you need to tell wich type of authentication to use and wich path you want to protect with permissions or roles based authorization.
+ShiroEE has a ready to use configuration, basically you need to create the properties file with the basic configurations, tell wich type of authentication you want to use and wich path you want to protect with permissions or roles authorization.
 
-This three process are described above.
+These three process are described below.
 
 ### ShiroEE properties:
 
