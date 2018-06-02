@@ -20,7 +20,20 @@ Download one of the releases under the [release page](https://github.com/arthurg
 
 ShiroEE has a ready to use configuration, basically you need to tell wich type of authentication to use and wich path you want to protect with permissions or roles based authorization.
 
-This two process are described above.
+This three process are described above.
+
+### ShiroEE properties:
+
+First of all, you need to provide the basic configuration to the framework creating a file named _shiroee.properties_ in your _resources_ folder, at least the obligatory parameters need to be set.
+
+```properties
+ldap.enabled=false # use true if you want to enable LDAP
+url.login=/index.xhtml
+url.login_success=/secured/dashboard.xhtml
+url.unauthorized=/error/401.xhtml
+```
+
+A list of the predefined values already shipped with the framework can be seen [here](https://github.com/arthurgregorio/shiro-ee/blob/master/src/main/java/br/eti/arthurgregorio/shiroee/config/Constants.java).
 
 ### Configure authentication:
 
@@ -30,18 +43,6 @@ To configure the authentication process you need to create a class to tell Shiro
 
 To configure the URL authorization of you project you just need to implement the ```HttpSecurityConfiguration``` class and with the builder class (```HttpSecurityBuilder```) provided by the project configure wich path's you need to protect. A sample of this process [can be found here](https://github.com/arthurgregorio/library/blob/master/src/main/java/br/eti/arthurgregorio/library/infrastructure/shiro/PathSecurityConfiguration.java).
 
-### Project with ShiroEE:
+## Project with ShiroEE:
 
 If you want a full project where ShiroEE is configured with authentication through LDAP and Database, you can check the Library project made by me to provide a full base architecture for JEE applications.
-
-### ShiroEE properties:
-
-First of all, you will need to provide the basic configuration to the framework by providing a file with the name of _shiroee.properties_ in your _resources_ folder, keep at least the minimum obligatory parameters.
-
-```properties
-url.login=/index.xhtml
-url.login_success=/secured/dashboard.xhtml
-url.unauthorized=/error/401.xhtml
-```
-
-A list of the predefined values already shipped with the framework can be seen [here](https://github.com/arthurgregorio/shiro-ee/blob/master/src/main/java/br/eti/arthurgregorio/shiroee/config/Constants.java).
