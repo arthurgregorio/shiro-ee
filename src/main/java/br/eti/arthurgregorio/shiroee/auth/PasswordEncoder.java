@@ -21,7 +21,7 @@ import org.apache.shiro.authc.credential.PasswordService;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
- * The bcryp passord service implementation.
+ * The bcrypt password service implementation.
  *
  * This class is only a basic implementation to provide to Shiro the ability to
  * match the users password for JDBC realms on the authentication process.

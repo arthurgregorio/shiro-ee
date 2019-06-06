@@ -25,8 +25,8 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.PrincipalCollection;
 
 /**
- * This class is a implementation of the {@link AuthenticationListener} used to
- * notify others about the steps of the authentication
+ * This class is a implementation of the {@link AuthenticationListener} used to notify others about the authentication
+ * process
  *
  * @author Arthur Gregorio
  *
@@ -61,7 +61,7 @@ public class AuthenticationEventSupport implements AuthenticationListener {
      * {@inheritDoc }
      * 
      * @param token
-     * @param exception *spo
+     * @param exception
      */
     @Override
     public void onFailure(AuthenticationToken token, AuthenticationException exception) {
