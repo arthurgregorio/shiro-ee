@@ -15,16 +15,15 @@
  */
 package br.eti.arthurgregorio.shiroee.config;
 
-import static br.eti.arthurgregorio.shiroee.config.messages.Messages.CONFIGURATION_ERROR;
-import java.io.File;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 
+import java.io.File;
+
+import static br.eti.arthurgregorio.shiroee.config.messages.Messages.CONFIGURATION_ERROR;
+
 /**
- * The configuration factory.
- * 
- * This class has a simple responsability, load and hold the values of ths 
- * library configuration to use when is needed
+ * Configuration factory. Load and provide the framework configurations when needed
  *
  * @author Arthur Gregorio
  *
@@ -36,26 +35,27 @@ public final class ConfigurationFactory {
     private static PropertiesConfiguration configuration;
 
     /**
-     * Static constructor to instantiate the properties file with the 
-     * configurations
+     * Static constructor to instantiate the properties file with the configurations
      */
     static {
         try {
-             configuration = new Configurations()
+            configuration = new Configurations()
                     .properties(new File("shiroee.properties"));
         } catch (org.apache.commons.configuration2.ex.ConfigurationException ex) {
             throw new org.apache.shiro.config.ConfigurationException(
                     CONFIGURATION_ERROR.format("shiroee.properties"));
         }
     }
-    
+
     /**
-     * Hide the constructor
+     * Hidden constructor
      */
     private ConfigurationFactory() { }
-    
+
     /**
-     * @return the properties with the configuration
+     * Retrieve configurations
+     *
+     * @return {@link PropertiesConfiguration} object
      */
     public static PropertiesConfiguration get() {
         return configuration;

@@ -18,19 +18,20 @@ package br.eti.arthurgregorio.shiroee.auth;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetailsProvider;
 import br.eti.arthurgregorio.shiroee.config.messages.Messages;
-import static br.eti.arthurgregorio.shiroee.config.messages.Messages.ACCOUNT_NOT_FOUND;
-import static com.google.common.base.Preconditions.checkNotNull;
-import java.util.Set;
 import org.apache.shiro.authc.AuthenticationException;
 
+import java.util.Set;
+
+import static br.eti.arthurgregorio.shiroee.config.messages.Messages.ACCOUNT_NOT_FOUND;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Basic implementation for authenticate users with local accounts on the 
- * database.
- * 
- * This implementation uses the {@link UserDetailsProvider} to find and provide
- * details about the account that you are trying to authenticate.
- * 
- * This aproach is similiar to the one used by Spring Security.
+ * Basic implementation for authenticate users with local accounts on the database.
+ *
+ * This implementation uses the {@link UserDetailsProvider} to find and provide details about the account that you are
+ * trying to authenticate.
+ *
+ * This approach is similar to the one used by Spring Security.
  *
  * @author Arthur Gregorio
  *
@@ -42,8 +43,7 @@ public class DatabaseAuthenticationMechanism implements AuthenticationMechanism<
     private final UserDetailsProvider userDetailsProvider;
 
     /**
-     * Constructor, initialize the mechanism of authentication with the 
-     * {@link UserDetailsProvider} implementation
+     * Constructor, initialize the mechanism of authentication with the {@link UserDetailsProvider} implementation
      *
      * @param userDetailsProvider the implementation of the user details provider
      */
@@ -53,9 +53,9 @@ public class DatabaseAuthenticationMechanism implements AuthenticationMechanism<
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param username
-     * @return 
+     * @return
      */
     @Override
     public UserDetails getAccount(String username) {
@@ -66,7 +66,7 @@ public class DatabaseAuthenticationMechanism implements AuthenticationMechanism<
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param username
      * @return
      */
@@ -77,7 +77,7 @@ public class DatabaseAuthenticationMechanism implements AuthenticationMechanism<
                 .findUserDetailsByUsername(username)
                 .orElseThrow(() -> new AuthenticationException(
                         Messages.ACCOUNT_NOT_FOUND.format(username)));
-        
+
         return userDetails.getPermissions();
     }
 }

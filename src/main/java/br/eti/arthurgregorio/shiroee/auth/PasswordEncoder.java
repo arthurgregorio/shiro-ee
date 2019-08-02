@@ -15,16 +15,14 @@
  */
 package br.eti.arthurgregorio.shiroee.auth;
 
-import javax.enterprise.context.RequestScoped;
 import lombok.Getter;
 import org.apache.shiro.authc.credential.PasswordService;
 import org.mindrot.jbcrypt.BCrypt;
 
+import javax.enterprise.context.RequestScoped;
+
 /**
- * The bcrypt password service implementation.
- *
- * This class is only a basic implementation to provide to Shiro the ability to
- * match the users password for JDBC realms on the authentication process.
+ * The bcryp password service implementation
  *
  * @author Arthur Gregorio
  *
@@ -55,22 +53,22 @@ public class PasswordEncoder implements PasswordService {
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param plaintextPassword
      * @return
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
-    @Override    
+    @Override
     public String encryptPassword(Object plaintextPassword) throws IllegalArgumentException {
         return BCrypt.hashpw(String.valueOf(plaintextPassword), BCrypt.gensalt(this.logRounds));
     }
-    
+
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param submittedPlaintext
      * @param encrypted
-     * @return 
+     * @return
      */
     @Override
     public boolean passwordsMatch(Object submittedPlaintext, String encrypted) {
@@ -78,24 +76,24 @@ public class PasswordEncoder implements PasswordService {
     }
 
     /**
-     * Same as {@link #passwordsMatch(java.lang.Object, java.lang.String)} but
-     * with string parameter for the submitted password
-     * 
+     * Same as {@link #passwordsMatch(java.lang.Object, java.lang.String)} but with string parameter for the
+     * submitted password
+     *
      * @param submittedPlaintext
      * @param encrypted
-     * @return 
+     * @return
      */
     public boolean passwordsMatch(String submittedPlaintext, String encrypted) {
         return BCrypt.checkpw(String.valueOf(submittedPlaintext), encrypted);
     }
-    
+
     /**
-     * Same as {@link #passwordsMatch(java.lang.Object, java.lang.String)} but
-     * with char-array parameter for the submitted password
-     * 
+     * Same as {@link #passwordsMatch(java.lang.Object, java.lang.String)} but with char-array parameter for the
+     * submitted password
+     *
      * @param submittedPlaintext
      * @param encrypted
-     * @return 
+     * @return
      */
     public boolean passwordsMatch(char[] submittedPlaintext, String encrypted) {
         return BCrypt.checkpw(String.valueOf(submittedPlaintext), encrypted);

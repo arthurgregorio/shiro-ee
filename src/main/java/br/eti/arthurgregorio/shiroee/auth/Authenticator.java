@@ -15,17 +15,17 @@
  */
 package br.eti.arthurgregorio.shiroee.auth;
 
-import java.io.Serializable;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+import java.io.Serializable;
+
 /**
- * The basic authenticator, with this class you can authenticate the users and
- * logout them.
+ * The basic authenticator, with this class you can authenticate the users and logout them.
  *
- * All the verifications are made throug the current {@link Subject}
+ * All the verifications are made through the current {@link Subject}
  *
  * @author Arthur Gregorio
  *
@@ -39,7 +39,7 @@ public class Authenticator implements Serializable {
     private final Subject subject;
 
     /**
-     * The constructor
+     * Constructor...
      */
     public Authenticator() {
         this.subject = SecurityUtils.getSubject();

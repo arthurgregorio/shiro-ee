@@ -15,9 +15,10 @@
  */
 package br.eti.arthurgregorio.shiroee.config;
 
-import javax.servlet.annotation.WebFilter;
 import lombok.NoArgsConstructor;
 import org.apache.shiro.web.servlet.ShiroFilter;
+
+import javax.servlet.annotation.WebFilter;
 
 /**
  * A simple http filter to enable security in all paths of the application

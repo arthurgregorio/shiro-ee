@@ -15,11 +15,12 @@
  */
 package br.eti.arthurgregorio.shiroee.config;
 
-import java.util.Set;
 import org.apache.shiro.realm.Realm;
 
+import java.util.Set;
+
 /**
- * The definition for the realm configuration
+ * Definition for the realm configuration
  *
  * @author Arthur Gregorio
  *
@@ -27,12 +28,11 @@ import org.apache.shiro.realm.Realm;
  * @since 1.0.0, 05/03/2018
  */
 public interface RealmConfiguration {
-    
+
     /**
-     * This method define the Shiro set of {@link Realm} to be used to 
-     * authenticate users 
-     * 
-     * @return a {@link Set} of realms
+     * Call the configuration of the {@link Realm} to be used for authentication
+     *
+     * @return {@link Set} of {@link Realm}
      */
     Set<Realm> configureRealms();
 }

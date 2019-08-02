@@ -19,7 +19,7 @@ import br.eti.arthurgregorio.shiroee.config.http.HttpSecurityBuilder;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 
 /**
- * The definition for http security configuration
+ * Definition for http security configuration
  *
  * @author Arthur Gregorio
  *
@@ -29,10 +29,9 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 public interface HttpSecurityConfiguration {
 
     /**
-     * Configure the http security builder to use in conjunction with the main
-     * configuration to build the {@link FilterChainResolver}
-     * 
-     * @return the http access rules
+     * Configure the {@link HttpSecurityBuilder} to be used
+     *
+     * @return instance of the {@link HttpSecurityBuilder} with all ACL rules
      */
     HttpSecurityBuilder configureHttpSecurity();
 }

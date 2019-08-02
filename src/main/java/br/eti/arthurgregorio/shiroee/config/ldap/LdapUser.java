@@ -15,19 +15,24 @@
  */
 package br.eti.arthurgregorio.shiroee.config.ldap;
 
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 /**
- * The details for the user fond on the LDAP/AD 
+ * LDAP/AD user representation
  *
  * @author Arthur Gregorio
  *
  * @version 1.0.0
  * @since 1.0.0, 05/01/2018
  */
+@ToString
+@EqualsAndHashCode
 public final class LdapUser {
 
     @Getter
@@ -47,22 +52,11 @@ public final class LdapUser {
     private String userAccountControl;
 
     /**
-     * Constructor, initialize the fields
-     */
-    public LdapUser() {
-        this.name = null;
-        this.mail = null;
-        this.sAMAccountName = null;
-        this.distinguishedName = null;
-        this.userAccountControl = null;
-    }
-    
-    /**
-     * Converte a set of {@link Attributes} to a single instance of this class
-     * 
-     * @param attributes the LDAP/AD attributes to work
-     * @return the {@link LdapUser} builded from this attributes
-     * @throws NamingException if any error ocurr in this mapping process
+     * Convert a set of {@link Attributes} to a single instance of this class
+     *
+     * @param attributes to be used
+     * @return the {@link LdapUser} created from the {@link Attributes}
+     * @throws NamingException if any error occur at the mapping process
      */
     public static LdapUser of(Attributes attributes) throws NamingException {
 
@@ -73,7 +67,7 @@ public final class LdapUser {
         ldapUser.setSAMAccountName(String.valueOf(attributes.get("sAMAccountName").get()));
         ldapUser.setDistinguishedName(String.valueOf(attributes.get("distinguishedName").get()));
         ldapUser.setUserAccountControl(String.valueOf(attributes.get("userAccountControl").get()));
-        
+
         return ldapUser;
     }
 }
