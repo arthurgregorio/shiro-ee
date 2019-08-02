@@ -28,11 +28,21 @@ import java.util.Optional;
 public interface UserDetailsProvider {
 
     /**
-     * Retrieve from a unknow datasource (mostly a database connection) the user
-     * account details
-     * 
+     * Retrieve from a unknown datasource (mostly a database connection) the user account details
+     *
+     * @deprecated Use {@link #findByUsername(String)} instead
+     *
      * @param username the username to search for the {@link UserDetails}
      * @return a {@link Optional} with the details
      */
+    @Deprecated
     Optional<UserDetails> findUserDetailsByUsername(String username);
+
+    /**
+     * Get the {@link UserDetails} for an account
+     *
+     * @param username to search for details
+     * @return {@link UserDetails} for the given username
+     */
+    UserDetails findByUsername(String username);
 }

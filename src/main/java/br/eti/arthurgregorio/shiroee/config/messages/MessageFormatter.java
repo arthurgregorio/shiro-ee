@@ -16,7 +16,7 @@
 package br.eti.arthurgregorio.shiroee.config.messages;
 
 /**
- * Simple formatter for the messages
+ * Simple formatter for application messages
  *
  * @author Arthur Gregorio
  *
@@ -27,9 +27,9 @@ public interface MessageFormatter {
 
     /**
      * Format the messages with the values provided in this method
-     * 
-     * @param values the values
-     * @return the message with the values
+     *
+     * @param values to be used on the message
+     * @return message with parameters applied
      */
     String format(Object... values);
 }

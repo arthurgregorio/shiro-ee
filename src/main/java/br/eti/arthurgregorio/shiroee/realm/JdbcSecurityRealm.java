@@ -20,23 +20,19 @@ import br.eti.arthurgregorio.shiroee.auth.DatabaseAuthenticationMechanism;
 import br.eti.arthurgregorio.shiroee.auth.PasswordEncoder;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetailsProvider;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.credential.PasswordMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+
 import static br.eti.arthurgregorio.shiroee.config.messages.Messages.AUTHENTICATION_ERROR;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.credential.PasswordMatcher;
 
 /**
- * A local realm used to authenticate users with through a database connection
- * providede by using a {@link DatabaseAuthenticationMechanism} in cojunction
- * with your implementation of the {@link UserDetailsProvider}
+ * A local realm used to authenticate through a database connection.
+ *
+ * This method requires a {@link DatabaseAuthenticationMechanism} and the {@link UserDetailsProvider} implementation
  *
  * @author Arthur Gregorio
  *
@@ -48,67 +44,59 @@ public class JdbcSecurityRealm extends AuthorizingRealm {
     private final AuthenticationMechanism<? extends UserDetails> mechanism;
 
     /**
-     * The constructor
-     * 
-     * @param mechanism the authentication mechanism that you 
-     * wish to use. If you don't want to implement your own mechanism, just 
-     * use the {@link DatabaseAuthenticationMechanism} already shipped with this 
-     * implementation of shiro
+     * Constructor...
+     *
+     * @param mechanism to be used
      */
     public JdbcSecurityRealm(AuthenticationMechanism<? extends UserDetails> mechanism) {
         this.mechanism = mechanism;
-        
+
         // instantiate the custom password matcher based on bcrypt
         final PasswordMatcher passwordMatcher = new PasswordMatcher();
 
         passwordMatcher.setPasswordService(new PasswordEncoder());
-        
+
         super.setCredentialsMatcher(passwordMatcher);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param authenticationToken
      * @return
-     * @throws AuthenticationException 
+     * @throws AuthenticationException
      */
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) 
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {
-        
-        final UsernamePasswordToken token = 
-                (UsernamePasswordToken) authenticationToken;
-        
-        final UserDetails userDetails = this.mechanism
-                 .getAccount(token.getUsername());
-        
+
+        final UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
+
+        final UserDetails userDetails = this.mechanism.getAccount(token.getUsername());
+
         if (!userDetails.isLdapBindAccount() && !userDetails.isBlocked()) {
-            return new SimpleAuthenticationInfo(userDetails.getUsername(), 
+            return new SimpleAuthenticationInfo(userDetails.getUsername(),
                     userDetails.getPassword(), this.getName());
         }
 
-        throw new IncorrectCredentialsException(AUTHENTICATION_ERROR
-                .format(token.getUsername()));
+        throw new IncorrectCredentialsException(AUTHENTICATION_ERROR.format(token.getUsername()));
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @param principalCollection
-     * @return 
+     * @return
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        
-        final String username = (String) 
-                this.getAvailablePrincipal(principalCollection);
-        
+
+        final String username = (String) this.getAvailablePrincipal(principalCollection);
+
         final SimpleAuthorizationInfo authzInfo = new SimpleAuthorizationInfo();
-        
-        authzInfo.setStringPermissions(
-                this.mechanism.getPermissions(username));
-        
+
+        authzInfo.setStringPermissions(this.mechanism.getPermissions(username));
+
         return authzInfo;
     }
 }

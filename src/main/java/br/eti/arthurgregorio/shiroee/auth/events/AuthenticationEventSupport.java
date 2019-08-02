@@ -15,18 +15,18 @@
  */
 package br.eti.arthurgregorio.shiroee.auth.events;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationListener;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 /**
- * This class is a implementation of the {@link AuthenticationListener} used to
- * notify others about the steps of the authentication
+ * Implementation of the {@link AuthenticationListener} used to notify others about the steps of the authentication
  *
  * @author Arthur Gregorio
  *
@@ -45,12 +45,12 @@ public class AuthenticationEventSupport implements AuthenticationListener {
     @Inject
     @OnLogout
     private Event<String> logoutEvent;
-    
+
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param token
-     * @param info 
+     * @param info
      */
     @Override
     public void onSuccess(AuthenticationToken token, AuthenticationInfo info) {
@@ -59,7 +59,7 @@ public class AuthenticationEventSupport implements AuthenticationListener {
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param token
      * @param exception *spo
      */
@@ -70,8 +70,8 @@ public class AuthenticationEventSupport implements AuthenticationListener {
 
     /**
      * {@inheritDoc }
-     * 
-     * @param principals 
+     *
+     * @param principals
      */
     @Override
     public void onLogout(PrincipalCollection principals) {

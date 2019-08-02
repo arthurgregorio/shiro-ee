@@ -16,8 +16,7 @@
 package br.eti.arthurgregorio.shiroee.config.messages;
 
 /**
- * The messages value holder to give a better way to inform the user about the
- * failures of the implementaion of this library
+ * Simple enum used to store all the messages used at the application events reporting
  *
  * @author Arthur Gregorio
  *
@@ -25,7 +24,7 @@ package br.eti.arthurgregorio.shiroee.config.messages;
  * @since 1.0.0, 01/03/2018
  */
 public enum Messages implements MessageFormatter {
-    
+
     LDAP_REPOSITORY_ERROR() {
         @Override
         public String format(Object... values) {

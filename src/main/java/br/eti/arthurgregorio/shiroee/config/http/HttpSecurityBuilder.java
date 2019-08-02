@@ -16,53 +16,48 @@
 package br.eti.arthurgregorio.shiroee.config.http;
 
 import br.eti.arthurgregorio.shiroee.config.ConfigurationFactory;
-import static br.eti.arthurgregorio.shiroee.config.Constants.AUTHENTICATED_OP;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.configuration2.PropertiesConfiguration;
+
+import static br.eti.arthurgregorio.shiroee.config.Constants.AUTHENTICATED_OP;
 
 /**
- * The http path security builder, with this class you can build rules to 
- * secure the access to your URL's
- * 
+ * The http path security builder, with this class you can build rules to secure the access to the application URL's
+ *
  * @author Arthur Gregorio
  *
  * @version 1.0.0
  * @since 1.0.0, 03/02/2018
  */
 public abstract class HttpSecurityBuilder {
-    
+
     private final String authcOperator;
     private final Map<String, String> rules;
-    
+
     protected final PropertiesConfiguration configuration;
 
     /**
-     * The constructor, load the class with the configuration to retrieve the 
-     * http rules operators and the rules map
+     * Constructor...
      */
     public HttpSecurityBuilder() {
-        
         this.configuration = ConfigurationFactory.get();
-        
         this.rules = new HashMap<>();
-        
-        this.authcOperator = this.configuration.getString(
-                "operator.authenticated", AUTHENTICATED_OP);
+        this.authcOperator = this.configuration.getString("operator.authenticated", AUTHENTICATED_OP);
     }
-    
+
     /**
-     * The builder operator to use to construct rules, used by the implementations
-     * of this class to format the rules for this builder
-     * 
-     * @return the builder operator to use 
+     * Get the builder operator
+     *
+     * @return the builder operator
      */
-    public abstract String getBuilderOperator();  
-    
+    public abstract String getBuilderOperator();
+
     /**
      * Method used to add rules to this builder
-     * 
+     *
      * @param path the path to be secured
      * @param rule the rule to be used to secure this path
      * @return this builder
@@ -70,42 +65,40 @@ public abstract class HttpSecurityBuilder {
     public HttpSecurityBuilder add(String path, String rule) {
         return this.add(path, rule, false);
     }
-    
+
     /**
-     * Method used to add rules to this builder when need to be authenticated
-     * to be accessed 
-     * 
+     * Method used to add rules to this builder when need to be authenticated to be accessed
+     *
      * @param path the path to be secured
      * @param rule the rule to be used to secure this path
      * @param authenticated if the 
      * @return this builder
      */
     public HttpSecurityBuilder add(String path, String rule, boolean authenticated) {
-        
+
         if (authenticated) {
             this.rules.put(path, this.authcOperator + "," + this.format(rule));
         } else {
             this.rules.put(path, this.format(rule));
         }
-        
+
         return this;
     }
 
     /**
-     * With this method you can retrieve the rules created in the execution of 
-     * this builder
-     * 
+     * With this method you can retrieve the rules created in the execution of this builder
+     *
      * @return the map of rules to be used
      */
     public Map<String, String> build() {
         return Collections.unmodifiableMap(this.rules);
     }
-    
+
     /**
-     * Used to format the rule whith the builder operator for the given rule
-     * 
-     * @param rule the rule to be formated
-     * @return the rule formated
+     * Used to format the rule with the builder operator for the given rule
+     *
+     * @param rule the rule to be formatted
+     * @return the rule formatted
      */
     private String format(String rule) {
         return String.format(this.getBuilderOperator(), rule);

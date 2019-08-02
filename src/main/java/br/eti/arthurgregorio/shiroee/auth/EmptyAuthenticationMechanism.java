@@ -16,72 +16,71 @@
 package br.eti.arthurgregorio.shiroee.auth;
 
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
+
 import java.util.Collections;
 import java.util.Set;
 
 /**
- * A empty authentication mechanism to use when you don't want to bind the 
- * LDAP/AD account to a local user to provide the permissions for authorization
+ * A empty authentication mechanism used when you don't want to bind the LDAP/AD account to a local user
  *
  * @author Arthur Gregorio
  *
  * @version 1.0.0
  * @since 1.0.0, 06/03/2018
  */
-public final class EmptyAuthenticationMechanism implements AuthenticationMechanism {
+public final class EmptyAuthenticationMechanism implements AuthenticationMechanism<EmptyAuthenticationMechanism.EmptyUser> {
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param username
-     * @return 
+     * @return
      */
     @Override
-    public UserDetails getAccount(String username) {
+    public EmptyUser getAccount(String username) {
         return new EmptyUser();
     }
 
     /**
      * {@inheritDoc }
-     * 
+     *
      * @param username
-     * @return 
+     * @return
      */
     @Override
     public Set<String> getPermissions(String username) {
         return Collections.emptySet();
     }
-    
+
     /**
-     * Simple implementation of empty user details done only to not let the 
-     * authentication process in the LDAP/AD stop 
+     * Empty user detail implementation
      */
-    public class EmptyUser implements UserDetails {
+    public static class EmptyUser implements UserDetails {
 
         /**
          * {@inheritDoc }
-         * 
-         * @return 
+         *
+         * @return
          */
         @Override
         public Object getUsername() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Empty user details didn't have username");
         }
 
         /**
          * {@inheritDoc }
-         * 
-         * @return 
+         *
+         * @return
          */
         @Override
         public Object getPassword() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException("Empty user details didn't have password");
         }
 
         /**
          * {@inheritDoc }
-         * 
-         * @return 
+         *
+         * @return
          */
         @Override
         public boolean isBlocked() {
@@ -90,8 +89,8 @@ public final class EmptyAuthenticationMechanism implements AuthenticationMechani
 
         /**
          * {@inheritDoc }
-         * 
-         * @return 
+         *
+         * @return
          */
         @Override
         public boolean isLdapBindAccount() {
@@ -100,13 +99,12 @@ public final class EmptyAuthenticationMechanism implements AuthenticationMechani
 
         /**
          * {@inheritDoc }
-         * 
-         * @return 
+         *
+         * @return
          */
         @Override
         public Set<String> getPermissions() {
             return Collections.emptySet();
         }
-        
     }
 }

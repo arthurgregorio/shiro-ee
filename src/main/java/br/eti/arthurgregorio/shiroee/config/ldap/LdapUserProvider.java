@@ -15,11 +15,12 @@
  */
 package br.eti.arthurgregorio.shiroee.config.ldap;
 
-import java.util.Optional;
 import org.apache.shiro.realm.ldap.LdapContextFactory;
 
+import java.util.Optional;
+
 /**
- * The interface for creating a LDAP/AD user provider
+ * Simple implementation of the {@link LdapUser} provider
  *
  * @author Arthur Gregorio
  *
@@ -30,18 +31,16 @@ public interface LdapUserProvider {
 
     /**
      * The method to call when you need to bind a user in the LDAP/AD repository
-     * 
-     * @param principal the usernem of the principal
-     * @return a {@link Optional} of {@link LdapUser} to provide the details 
-     * about the user that you want to authenticate
+     *
+     * @param principal represents the username of the desired user
+     * @return an {@link Optional} of the {@link LdapUser}
      */
     Optional<LdapUser> search(String principal);
-    
+
     /**
-     * The Shiro {@link LdapContextFactory} to use for creating connections to 
-     * the LDAP/AD repository in this provider
-     * 
-     * @param ldapContextFactory the factory, must not be null
+     * The {@link LdapContextFactory} to use for connection at the LDAP/AD repository
+     *
+     * @param ldapContextFactory to create connections
      */
     void setLdapContextFactory(LdapContextFactory ldapContextFactory);
 }

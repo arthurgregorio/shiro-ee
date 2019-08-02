@@ -18,7 +18,7 @@ package br.eti.arthurgregorio.shiroee.config.jdbc;
 import java.util.Set;
 
 /**
- * Definition for what details we need from you user account model
+ * Definition of the user account model
  *
  * @author Arthur Gregorio
  *
@@ -52,11 +52,4 @@ public interface UserDetails {
      * @return the list of permissions for this account
      */
     Set<String> getPermissions();
-
-    /**
-     * @return if this account is not blocked or is blocked
-     */
-    default boolean isNotBlocked() {
-        return !this.isBlocked();
-    }
 }

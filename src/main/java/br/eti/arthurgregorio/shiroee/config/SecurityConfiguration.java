@@ -19,8 +19,8 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
 /**
- * The definition for configration of Shiro with this library
- * 
+ * Interface for configurations definition
+ *
  * @author Arthur Gregorio
  *
  * @version 1.0.0
@@ -29,19 +29,17 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 public interface SecurityConfiguration {
 
     /**
-     * This method is used to configure the {@link FilterChainResolver} for 
-     * security of the http paths 
-     * 
-     * @return the configured filter chain to resolve http path security
+     * Method used to configure the {@link FilterChainResolver} for http security
+     *
+     * @return configured filter chain to resolve http security
      */
-    FilterChainResolver configurteFilterChainResolver();
-    
+    FilterChainResolver configureFilterChainResolver();
+
     /**
-     * This method is used to configure the {@link DefaultWebSecurityManager} to
-     * manage all the other parts of the framework, i.e. the authentication 
-     * process throug the realms
-     * 
-     * @return the default web security manager for use with Shiro
+     * Method used to configure the {@link DefaultWebSecurityManager} to manage all the other parts of the framework,
+     * i.e. the authentication process through the realms
+     *
+     * @return default web security manager
      */
     DefaultWebSecurityManager configureSecurityManager();
 }

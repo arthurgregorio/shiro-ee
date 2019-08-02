@@ -18,7 +18,7 @@ package br.eti.arthurgregorio.shiroee.config.http;
 import static br.eti.arthurgregorio.shiroee.config.Constants.REQUIRED_PERMISSION_OP;
 
 /**
- * The builder for permission based http path security
+ * Builder for permission based http path security
  *
  * @author Arthur Gregorio
  *
@@ -30,23 +30,20 @@ public class PermissionHttpSecurityBuilder extends HttpSecurityBuilder {
     private final String builderOperator;
 
     /**
-     * The constructor, from the configuration initialize the default operator
+     * The constructor
      */
     public PermissionHttpSecurityBuilder() {
         super();
-        
-        // from the configuration, get the operator for permissions or use the
-        // default one
-        final String operator = this.configuration.getString(
-                "operator.required_permission", REQUIRED_PERMISSION_OP);
-        
+
+        // from the configuration, get the operator for permissions or use the default one
+        final String operator = this.configuration.getString("operator.required_permission", REQUIRED_PERMISSION_OP);
         this.builderOperator = operator + "[%s]";
     }
 
     /**
      * {@inheritDoc }
-     * 
-     * @return 
+     *
+     * @return
      */
     @Override
     public String getBuilderOperator() {

@@ -21,8 +21,7 @@ import lombok.Setter;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 /**
- * The credential, this class is only a DTO to use on the authentication 
- * process.
+ * The credential, this class is only a DTO to use on the authentication process.
  *
  * @author Arthur Gregorio
  *
@@ -40,11 +39,12 @@ public final class Credential {
     private String password;
     @Getter
     @Setter
-    private boolean rememberMe;    
-    
+    private boolean rememberMe;
+
     /**
-     * @return the current authentication data stored in this instance in the
-     * format of Shiro {@link UsernamePasswordToken}
+     * Transform the credentials in a valid token for authentication
+     *
+     * @return the {@link UsernamePasswordToken} for this credentials
      */
     public UsernamePasswordToken asToken() {
         return new UsernamePasswordToken(this.username, this.password, this.rememberMe);

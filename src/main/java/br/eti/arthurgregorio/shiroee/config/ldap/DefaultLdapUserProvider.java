@@ -15,24 +15,25 @@
  */
 package br.eti.arthurgregorio.shiroee.config.ldap;
 
-import static br.eti.arthurgregorio.shiroee.config.messages.Messages.BIND_ERROR;
-import static com.google.common.base.Preconditions.checkNotNull;
-import java.util.Optional;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.realm.ldap.LdapContextFactory;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.realm.ldap.LdapContextFactory;
+import java.util.Optional;
+
+import static br.eti.arthurgregorio.shiroee.config.messages.Messages.BIND_ERROR;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * The default implementation for {@link LdapUserProvider}.
- * 
- * With this class you can search for a {@link LdapUser} on the LDAP/AD 
- * directory
- * 
+ * Default implementation for {@link LdapUserProvider}.
+ *
+ * With this class you can search for a {@link LdapUser} on the LDAP/AD directory
+ *
  * @author Arthur Gregorio
  *
  * @version 1.0.0
@@ -47,22 +48,21 @@ public class DefaultLdapUserProvider implements LdapUserProvider {
 
     /**
      * Constructor...
-     * 
+     *
      * @param baseDN the base DN account search
-     * @param searchFilter the search fielter to be used
+     * @param searchFilter the search filter to be used
      */
     public DefaultLdapUserProvider(String baseDN, String searchFilter) {
         this.baseDN = checkNotNull(baseDN);
         this.searchFilter = checkNotNull(searchFilter);
     }
-    
+
     /**
      * Constructor...
-     * 
-     * @param baseDN the base DN account search
-     * @param searchFilter the search fielter to be used
-     * @param ldapContextFactory Shiro {@link LdapContextFactory} to be used to 
-     * get LDAP/AD connections
+     *
+     * @param baseDN of the account to search
+     * @param searchFilter to used
+     * @param ldapContextFactory to get LDAP/AD connections
      */
     public DefaultLdapUserProvider(String baseDN, String searchFilter, LdapContextFactory ldapContextFactory) {
         this(baseDN, searchFilter);
@@ -80,8 +80,8 @@ public class DefaultLdapUserProvider implements LdapUserProvider {
         try {
             final SearchControls searchControls = new SearchControls();
             searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            
-            final LdapContext context = 
+
+            final LdapContext context =
                     this.ldapContextFactory.getSystemLdapContext();
 
             final NamingEnumeration answer = context.search(this.baseDN,
@@ -97,14 +97,14 @@ public class DefaultLdapUserProvider implements LdapUserProvider {
         } catch (NamingException ex) {
             throw new IncorrectCredentialsException(BIND_ERROR.format(principal));
         }
-        
+
         return Optional.empty();
     }
 
     /**
      * {@inheritDoc }
-     * 
-     * @param ldapContextFactory 
+     *
+     * @param ldapContextFactory
      */
     @Override
     public void setLdapContextFactory(LdapContextFactory ldapContextFactory) {

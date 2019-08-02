@@ -16,6 +16,8 @@
 package br.eti.arthurgregorio.shiroee.auth;
 
 import java.util.Set;
+
+import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import org.apache.shiro.realm.Realm;
 
 /**
@@ -29,7 +31,7 @@ import org.apache.shiro.realm.Realm;
  * @version 1.0.0
  * @since 1.0.0, 06/03/2018
  */
-public interface AuthenticationMechanism<T> {
+public interface AuthenticationMechanism<T extends UserDetails> {
 
     /**
      * Provide the necessary data for the account to the {@link Realm} that you 
