@@ -61,7 +61,7 @@ public class SecurityWebListener extends EnvironmentLoaderListener {
         final DefaultWebEnvironment environment = (DefaultWebEnvironment) super.createEnvironment(servletContext);
 
         environment.setSecurityManager(this.configuration.configureSecurityManager());
-        environment.setFilterChainResolver(this.configuration.configurteFilterChainResolver());
+        environment.setFilterChainResolver(this.configuration.configureFilterChainResolver());
 
         return environment;
     }

@@ -25,28 +25,10 @@ package br.eti.arthurgregorio.shiroee.config.messages;
  */
 public enum Messages implements MessageFormatter {
 
-    LDAP_REPOSITORY_ERROR() {
-        @Override
-        public String format(Object... values) {
-            return "Can't create a connection to the LDAP/AD repository";
-        }
-    },
-    LDAP_CONFIGURATION_INCOMPLETE() {
-        @Override
-        public String format(Object... values) {
-            return "Ldap url, bind user/password was not provided, check your configurations";
-        }
-    },
     NO_REALM_ERROR() {
         @Override
         public String format(Object... values) {
             return "No realm provided for configuration";
-        }
-    },
-    CANT_LOAD_CONFIGURATION() {
-        @Override
-        public String format(Object... values) {
-            return String.format("Can't load %s configuration file from classpath", values);
         }
     },
     CONFIGURATION_ERROR() {
@@ -59,18 +41,6 @@ public enum Messages implements MessageFormatter {
         @Override
         public String format(Object... values) {
             return String.format("Tha configuration class %s has a unsatisfied or ambiguous dependency", values);
-        }
-    },
-    ACCOUNT_NOT_FOUND() {
-        @Override
-        public String format(Object... values) {
-            return String.format("Can't find local user with username", values);
-        }
-    },
-    ACCOUNT_BLOCKED() {
-        @Override
-        public String format(Object... values) {
-            return String.format("User %s is blocked on local accounts", values);
         }
     },
     AUTHENTICATION_ERROR() {

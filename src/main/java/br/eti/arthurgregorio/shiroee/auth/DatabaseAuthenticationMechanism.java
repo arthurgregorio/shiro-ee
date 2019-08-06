@@ -17,12 +17,9 @@ package br.eti.arthurgregorio.shiroee.auth;
 
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetails;
 import br.eti.arthurgregorio.shiroee.config.jdbc.UserDetailsProvider;
-import br.eti.arthurgregorio.shiroee.config.messages.Messages;
-import org.apache.shiro.authc.AuthenticationException;
 
 import java.util.Set;
 
-import static br.eti.arthurgregorio.shiroee.config.messages.Messages.ACCOUNT_NOT_FOUND;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -59,9 +56,7 @@ public class DatabaseAuthenticationMechanism implements AuthenticationMechanism<
      */
     @Override
     public UserDetails getAccount(String username) {
-        return this.userDetailsProvider.findUserDetailsByUsername(username)
-                .orElseThrow(() -> new AuthenticationException(
-                        ACCOUNT_NOT_FOUND.format(username)));
+        return this.userDetailsProvider.findByUsername(username);
     }
 
     /**
@@ -72,12 +67,7 @@ public class DatabaseAuthenticationMechanism implements AuthenticationMechanism<
      */
     @Override
     public Set<String> getPermissions(String username) {
-
-        final UserDetails userDetails = this.userDetailsProvider
-                .findUserDetailsByUsername(username)
-                .orElseThrow(() -> new AuthenticationException(
-                        Messages.ACCOUNT_NOT_FOUND.format(username)));
-
+        final UserDetails userDetails = this.userDetailsProvider.findByUsername(username);
         return userDetails.getPermissions();
     }
 }

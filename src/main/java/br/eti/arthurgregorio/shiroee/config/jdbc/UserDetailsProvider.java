@@ -15,6 +15,8 @@
  */
 package br.eti.arthurgregorio.shiroee.config.jdbc;
 
+import org.apache.shiro.authc.UnknownAccountException;
+
 import java.util.Optional;
 
 /**
@@ -35,8 +37,10 @@ public interface UserDetailsProvider {
      * @param username the username to search for the {@link UserDetails}
      * @return a {@link Optional} with the details
      */
-    @Deprecated
-    Optional<UserDetails> findUserDetailsByUsername(String username);
+    @Deprecated(since = "1.5.0", forRemoval = true)
+    default Optional<UserDetails> findUserDetailsByUsername(String username) {
+        return Optional.of(this.findByUsername(username));
+    }
 
     /**
      * Get the {@link UserDetails} for an account
@@ -44,5 +48,5 @@ public interface UserDetailsProvider {
      * @param username to search for details
      * @return {@link UserDetails} for the given username
      */
-    UserDetails findByUsername(String username);
+    UserDetails findByUsername(String username) throws UnknownAccountException;
 }
